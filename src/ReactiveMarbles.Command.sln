@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveMarbles.Command", "ReactiveMarbles.Command\ReactiveMarbles.Command.csproj", "{19AA5FBF-A095-4459-A523-03E5221AEF0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveMarbles.Command.Tests", "ReactiveMarbles.Command.Tests\ReactiveMarbles.Command.Tests.csproj", "{7D1573F5-9CEF-49EB-B653-87857230495A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19AA5FBF-A095-4459-A523-03E5221AEF0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19AA5FBF-A095-4459-A523-03E5221AEF0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19AA5FBF-A095-4459-A523-03E5221AEF0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19AA5FBF-A095-4459-A523-03E5221AEF0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D1573F5-9CEF-49EB-B653-87857230495A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D1573F5-9CEF-49EB-B653-87857230495A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D1573F5-9CEF-49EB-B653-87857230495A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D1573F5-9CEF-49EB-B653-87857230495A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
