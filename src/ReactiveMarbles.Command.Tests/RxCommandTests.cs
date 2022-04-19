@@ -1256,8 +1256,10 @@ public class RxCommandTests
             throw new Exception("break execution");
         }
 
+        // TODO: [rlittlesii: April 18, 2022] This fails
         var fixture = RxCommand.Create(Execute);
 
+        // this passes
         var fixture = new RxCommand<Unit, Unit>(
             async _ =>
             {
