@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
@@ -535,6 +536,7 @@ public class RxCommand<TParam, TResult> : IRxCommand<TParam, TResult>
     private readonly IObservable<bool> _isExecuting;
     private readonly IObservable<TResult> _results;
     private readonly ISubject<ExecutionInfo, ExecutionInfo> _synchronizedExecutionInfo;
+    private readonly CompositeDisposable _subscriptions = new();
     private EventHandler? _canExecuteChanged;
     private bool _canExecuteValue;
 
@@ -749,7 +751,17 @@ public class RxCommand<TParam, TResult> : IRxCommand<TParam, TResult>
     }
 
     /// <inheritdoc cref="IRxCommand" />
-    public IDisposable Subscribe(IObserver<TResult> observer) => _results.Subscribe(observer);
+    public IDisposable Subscribe(IObserver<TResult> observer)
+    {
+        var disposable = _results.Subscribe(observer);
+        var ret = Disposable.Create(() =>
+        {
+            observer?.OnCompleted();
+            disposable.Dispose();
+        });
+        _subscriptions.Add(ret);
+        return ret;
+    }
 
     /// <inheritdoc/>
     public void Dispose()
@@ -782,6 +794,7 @@ public class RxCommand<TParam, TResult> : IRxCommand<TParam, TResult>
         _executionInfo.Dispose();
         _exceptions.Dispose();
         _canExecuteSubscription.Dispose();
+        _subscriptions.Dispose();
     }
 
     /// <summary>

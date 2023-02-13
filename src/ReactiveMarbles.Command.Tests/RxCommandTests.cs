@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -17,6 +18,7 @@ using FluentAssertions;
 using Microsoft.Reactive.Testing;
 using ReactiveMarbles.Locator;
 using ReactiveMarbles.Mvvm;
+using ReactiveUI;
 using ReactiveUI.Testing;
 using Xunit;
 
@@ -1256,18 +1258,8 @@ public class RxCommandTests
             throw new Exception("break execution");
         }
 
-        // TODO: [rlittlesii: April 18, 2022] This fails
-        var fixture = RxCommand.Create(Execute);
+        var fixture = RxCommand.Create(Execute, outputScheduler: ImmediateScheduler.Instance);
 
-        // this passes
-        var fixture = new RxCommand<Unit, Unit>(
-            async _ =>
-            {
-                await subj.Take(1);
-                throw new Exception("break execution");
-            },
-            ObservableConstants.True,
-            ImmediateScheduler.Instance);
         fixture.IsExecuting.Subscribe(x => isExecuting = x);
         fixture.ThrownExceptions.Subscribe(ex => fail = ex);
 
@@ -1313,5 +1305,53 @@ public class RxCommandTests
 
         await Task.Delay(200).ConfigureAwait(false);
         result.Should().Be(1);
+    }
+
+    /// <summary>
+    /// Tests RxCommand can dispose self.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    public async Task RxCommandCanDisposeSelf()
+    {
+        var command = RxCommand.Create(() => new object());
+        var waiter = WaitForValueAsync();
+        command.Dispose();
+        Assert.Null(await waiter.ConfigureAwait(false));
+
+        async Task<object?> WaitForValueAsync() => await command.FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// Tests RxCommand can dispose self.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    public async Task RxCommandCanDisposeSelfAfterSubscribe()
+    {
+        var command = RxCommand.Create(() => "RxCommand", outputScheduler: ImmediateScheduler.Instance);
+        var disposables = new CompositeDisposable
+        {
+            command
+        };
+        var waiter = WaitForValueAsync();
+        var valueRecieved = false;
+        string? executeStringRecieved = null;
+        string? stringRecieved = null;
+        disposables.Add(command.Subscribe(
+            s =>
+            {
+                stringRecieved = s;
+                valueRecieved = true;
+            },
+            () => valueRecieved = true));
+        disposables.Add(command.Execute().Subscribe(s => executeStringRecieved = s));
+        Assert.True(valueRecieved);
+        Assert.Equal("RxCommand", executeStringRecieved);
+        Assert.Equal("RxCommand", stringRecieved);
+        disposables.Dispose();
+        Assert.Equal("RxCommand", await waiter.ConfigureAwait(false));
+
+        async Task<string?> WaitForValueAsync() => await command.FirstOrDefaultAsync();
     }
 }
