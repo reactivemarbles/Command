@@ -530,7 +530,7 @@ public class RxCommand<TParam, TResult> : IRxCommand<TParam, TResult>
 {
     private readonly IObservable<bool> _canExecute;
     private readonly IDisposable _canExecuteSubscription;
-    private readonly ScheduledSubject<Exception> _exceptions;
+    private readonly ProxyScheduledSubject<Exception> _exceptions;
     private readonly Func<TParam, IObservable<TResult>> _execute;
     private readonly Subject<ExecutionInfo> _executionInfo;
     private readonly IObservable<bool> _isExecuting;
@@ -622,7 +622,7 @@ public class RxCommand<TParam, TResult> : IRxCommand<TParam, TResult>
         _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         var coreRegistration = ServiceLocator.Current().GetService<ICoreRegistration>();
         var scheduler = outputScheduler ?? coreRegistration.MainThreadScheduler;
-        _exceptions = new ScheduledSubject<Exception>(scheduler, coreRegistration.ExceptionHandler);
+        _exceptions = new ProxyScheduledSubject<Exception>(scheduler, coreRegistration.ExceptionHandler);
         _executionInfo = new Subject<ExecutionInfo>();
         _synchronizedExecutionInfo = Subject.Synchronize(_executionInfo, scheduler);
         _isExecuting = _synchronizedExecutionInfo.Scan(
