@@ -31,7 +31,7 @@
     <PackageVersion Include="FluentAssertions.Analyzers" Version="0.31.0" />
     <PackageVersion Include="ReactiveUI.Testing" Version="19.6.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.0" />
+    <PackageVersion Include="Microsoft.Reactive.Testing" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
