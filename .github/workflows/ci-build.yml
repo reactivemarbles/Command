@@ -33,7 +33,7 @@ jobs:
         vs where release
 
     - name: Checkout
-      uses: actions/checkout@v6.0.2
+      uses: actions/checkout@v6.1.0
       with:
         fetch-depth: 0
         lfs: true
